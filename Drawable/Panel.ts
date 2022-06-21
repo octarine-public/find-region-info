@@ -55,7 +55,6 @@ export default class WindowPanel {
 			return
 
 		if (this.DirtyPosition) {
-			Menu.Base.SaveConfigASAP = true
 			const mousePos = Input.CursorOnScreen
 			base_header.pos1.CopyFrom(mousePos.Subtract(this.MouseOnPanel))
 			this.menu.PositionX.value = base_header.pos1.Round(1).x
@@ -83,6 +82,9 @@ export default class WindowPanel {
 		if (key !== VMouseKeys.MK_LBUTTON)
 			return true
 		this.DirtyPosition = false
+		Menu.Base.SaveConfigASAP = true
+		this.menu.PositionX.value = this.HeaderPosition.pos1.Round(1).x
+		this.menu.PositionY.value = this.HeaderPosition.pos1.Round(1).y
 		return true
 	}
 
