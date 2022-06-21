@@ -57,8 +57,11 @@ export default class WindowPanel {
 		if (this.DirtyPosition) {
 			const mousePos = Input.CursorOnScreen
 			base_header.pos1.CopyFrom(mousePos.Subtract(this.MouseOnPanel))
-			this.menu.PositionX.value = base_header.pos1.Round(1).x
-			this.menu.PositionY.value = base_header.pos1.Round(1).y
+			this.menu.Position.Vector = base_header.pos1
+				.Clone()
+				.DivideScalarX(GUIInfo.GetWidthScale())
+				.DivideScalarY(GUIInfo.GetHeightScale())
+				.RoundForThis(1)
 		}
 	}
 
@@ -83,8 +86,11 @@ export default class WindowPanel {
 			return true
 		this.DirtyPosition = false
 		Menu.Base.SaveConfigASAP = true
-		this.menu.PositionX.value = this.HeaderPosition.pos1.Round(1).x
-		this.menu.PositionY.value = this.HeaderPosition.pos1.Round(1).y
+		this.menu.Position.Vector = this.HeaderPosition.pos1
+			.Clone()
+			.DivideScalarX(GUIInfo.GetWidthScale())
+			.DivideScalarY(GUIInfo.GetHeightScale())
+			.RoundForThis(1)
 		return true
 	}
 
