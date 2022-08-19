@@ -9,7 +9,7 @@ export default class MenuManager {
 	public Position: {
 		X: Menu.Slider
 		Y: Menu.Slider
-		Vector: Vector2
+		Vector: Vector2,
 	}
 
 	public OpacityHeader: Menu.Slider
@@ -70,6 +70,7 @@ Menu.Localization.AddLocalizationUnit("russian", new Map([
 	["player", "игрок"],
 	["players", "игрока"],
 	["players_x", "игроков"],
+	["Position", "Позиция"],
 	["Show regions", "Показать регионы"],
 	["Total in search", "Всего в поиске"],
 	["Finding Info", "Информация о поиске"],
