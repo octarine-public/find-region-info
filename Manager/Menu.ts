@@ -61,19 +61,3 @@ export default class MenuManager {
 		this.Position.Y.value = 10
 	}
 }
-
-Menu.Localization.AddLocalizationUnit("english", new Map([
-	["players_x", "players"],
-]))
-
-Menu.Localization.AddLocalizationUnit("russian", new Map([
-	["player", "игрок"],
-	["players", "игрока"],
-	["players_x", "игроков"],
-	["Position", "Позиция"],
-	["Show regions", "Показать регионы"],
-	["Total in search", "Всего в поиске"],
-	["Finding Info", "Информация о поиске"],
-	["Opacity header", "Прозрачность заголовка"],
-	["Opacity region", "Прозрачность регионов"],
-]))
