@@ -1,4 +1,4 @@
-import { Menu, Vector2 } from "wrapper/Imports"
+import { Menu, Vector2 } from "github.com/octarine-public/wrapper/wrapper/Imports"
 
 export default class MenuManager {
 

@@ -1,4 +1,4 @@
-import { EventsSDK, InputEventSDK } from "wrapper/Imports"
+import { EventsSDK, InputEventSDK } from "github.com/octarine-public/wrapper/wrapper/Imports"
 import PlayersSearchManager from "./Manager/Main"
 import MenuManager from "./Manager/Menu"
 

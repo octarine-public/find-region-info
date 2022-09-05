@@ -1,4 +1,4 @@
-import { Menu, Utils } from "wrapper/Imports"
+import { Menu, Utils } from "github.com/octarine-public/wrapper/wrapper/Imports"
 
 const path = "github.com/octarine-public/find-region-info/scripts_files"
 const Load = (name: string) => {
