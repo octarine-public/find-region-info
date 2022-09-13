@@ -1,4 +1,4 @@
-import { DOTAGameUIState_t, GameState, Parse, VMouseKeys } from "github.com/octarine-public/wrapper/wrapper/Imports"
+import { DOTAGameUIState_t, GameState, Parse, VMouseKeys } from "github.com/octarine-public/wrapper/index"
 import WindowPanel from "../Drawable/Panel"
 import MenuManager from "./Menu"
 

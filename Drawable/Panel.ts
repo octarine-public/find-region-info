@@ -1,5 +1,5 @@
-import { FlagText, RectangleX } from "github.com/octarine-private/immortal-core/Imports"
-import { Color, GUIInfo, Input, Menu, Vector2, VMouseKeys } from "github.com/octarine-public/wrapper/wrapper/Imports"
+import { FlagText, RectangleX } from "github.com/octarine-private/immortal-core/index"
+import { Color, GUIInfo, Input, Menu, Vector2, VMouseKeys } from "github.com/octarine-public/wrapper/index"
 import MenuManager from "../Manager/Menu"
 
 export interface IMenu {
