@@ -1,6 +1,7 @@
 {
-	"name": "find-region-info",
 	"version": "1.0.0",
+	"main": "Bootstrap.ts",
+	"name": "find-region-info",
 	"description": "Find Region Info",
 	"author": "SicdeX",
 	"devDependencies": {

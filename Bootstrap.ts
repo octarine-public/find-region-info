@@ -1,6 +1,7 @@
 import { EventsSDK, InputEventSDK } from "github.com/octarine-public/wrapper/index"
 import PlayersSearchManager from "./Manager/Main"
 import MenuManager from "./Manager/Menu"
+import "./Translate"
 
 const IMenu = new MenuManager()
 const IManager = new PlayersSearchManager(IMenu)
