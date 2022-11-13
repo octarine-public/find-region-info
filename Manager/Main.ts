@@ -1,4 +1,4 @@
-import { DOTAGameUIState_t, GameState, Parse, VMouseKeys } from "github.com/octarine-public/wrapper/index"
+import { DOTAGameUIState_t, GameState, VMouseKeys } from "github.com/octarine-public/wrapper/index"
 import WindowPanel from "../Drawable/Panel"
 import MenuManager from "./Menu"
 
@@ -53,7 +53,7 @@ export default class PlayersSearchManager {
 	}
 
 	protected GetGroups() {
-		const kv = Parse.parseKVFile("scripts/matchgroups.txt")
+		const kv = parseKV("scripts/matchgroups.txt")
 		const values = [...((kv.get("matchgroups") as RecursiveMap) ?? new Map()).values()]
 			.filter(a => a instanceof Map) as RecursiveMap[]
 		return new Map(values.map(a => [parseInt(a.get("group") as string), a.get("display_name") as string]))
