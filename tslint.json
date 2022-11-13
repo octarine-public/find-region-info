@@ -23,8 +23,7 @@
 		],
 		"indent": [
 			true,
-			"tabs",
-			4
+			"tabs"
 		],
 		"curly": false,
 		"arrow-parens": [
