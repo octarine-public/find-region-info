@@ -1,7 +1,6 @@
 import { Menu, Vector2 } from "github.com/octarine-public/wrapper/index"
 
-export default class MenuManager {
-
+export class MenuManager {
 	public Tree: Menu.Node
 	public State: Menu.Toggle
 
@@ -9,7 +8,7 @@ export default class MenuManager {
 	public Position: {
 		X: Menu.Slider
 		Y: Menu.Slider
-		Vector: Vector2,
+		Vector: Vector2
 	}
 
 	public OpacityHeader: Menu.Slider
@@ -27,7 +26,12 @@ export default class MenuManager {
 		this.OpacityHeader = this.Tree.AddSlider("Opacity header", 100, 25, 100)
 		this.OpacityRegion = this.Tree.AddSlider("Opacity region", 85, 25, 100)
 
-		this.Position = this.Tree.AddVector2("Position", new Vector2(1237, 10), new Vector2(0, 0), new Vector2(1920, 1080))
+		this.Position = this.Tree.AddVector2(
+			"Position",
+			new Vector2(1237, 10),
+			new Vector2(0, 0),
+			new Vector2(1920, 1080)
+		)
 
 		this.Reset = this.Tree.AddButton("Reset")
 		this.Reset.OnValue(() => this.ResetSettings())
@@ -39,7 +43,7 @@ export default class MenuManager {
 			PositionY: this.Position.Y.value,
 			ShowRegion: this.ShowRegion.value,
 			OpacityHeader: this.OpacityHeader.value,
-			OpacityRegion: this.OpacityRegion.value,
+			OpacityRegion: this.OpacityRegion.value
 		}
 	}
 
