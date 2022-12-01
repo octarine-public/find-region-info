@@ -1,12 +1,5 @@
 import { FlagText, RectangleX } from "github.com/octarine-private/immortal-core/index"
-import {
-	Color,
-	GUIInfo,
-	Input,
-	Menu,
-	Vector2,
-	VMouseKeys
-} from "github.com/octarine-public/wrapper/index"
+import { Color, GUIInfo, Input, Menu, Vector2, VMouseKeys } from "github.com/octarine-public/wrapper/index"
 
 import { MenuManager } from "../Manager/Menu"
 
@@ -57,7 +50,9 @@ export class WindowPanel {
 			this.Players(baseHeader, players, regions)
 		}
 
-		if (baseHeader.IsZero()) return
+		if (baseHeader.IsZero()) {
+			return
+		}
 
 		if (this.DirtyPosition) {
 			const mousePos = Input.CursorOnScreen
@@ -85,7 +80,9 @@ export class WindowPanel {
 	}
 
 	public OnMouseKeyUp(key: VMouseKeys) {
-		if (key !== VMouseKeys.MK_LBUTTON) return true
+		if (key !== VMouseKeys.MK_LBUTTON) {
+			return true
+		}
 		this.DirtyPosition = false
 		Menu.Base.SaveConfigASAP = true
 		this.menu.Position.Vector = this.HeaderPosition.pos1
@@ -97,7 +94,9 @@ export class WindowPanel {
 	}
 
 	public OnMouseKeyDown(key: VMouseKeys) {
-		if (key !== VMouseKeys.MK_LBUTTON || this.HeaderPosition.IsZero()) return true
+		if (key !== VMouseKeys.MK_LBUTTON || this.HeaderPosition.IsZero()) {
+			return true
+		}
 
 		const baseHeader = this.HeaderPosition
 		const header = baseHeader.Clone().SubtractSize(10)
@@ -118,8 +117,9 @@ export class WindowPanel {
 			return false
 		}
 
-		if (!Input.CursorOnScreen.IsUnderRectangle(header.x, header.y, header.Width, header.Height))
+		if (!Input.CursorOnScreen.IsUnderRectangle(header.x, header.y, header.Width, header.Height)) {
 			return true
+		}
 
 		this.DirtyPosition = true
 		this.MouseOnPanel.CopyFrom(Input.CursorOnScreen.Subtract(header.pos1))
@@ -133,13 +133,17 @@ export class WindowPanel {
 
 		for (const [key, displayName] of players) {
 			const playerCount = regions[key] ?? 0
-			if (playerCount === 0) continue
+			if (playerCount === 0) {
+				continue
+			}
 
 			if (this.menu.ShowRegion.value) {
 				const localizedName = displayName.startsWith("#")
 					? Menu.Localization.Localize(displayName.slice(1))
 					: displayName
+
 				background.pos1.AddScalarY(background.Height)
+
 				RectangleX.FilledRect(background, this.backgroundColor)
 
 				const textPosition = background.Clone().SubtractSize(10)
@@ -170,9 +174,7 @@ export class WindowPanel {
 		const arrowPosition = new RectangleX(arrowPos, arrowSize)
 
 		RectangleX.Image(
-			!this.menu.ShowRegion.value
-				? WindowPanel.arrowInactivePath
-				: WindowPanel.arrowActivePath,
+			!this.menu.ShowRegion.value ? WindowPanel.arrowInactivePath : WindowPanel.arrowActivePath,
 			arrowPosition,
 			this.ImageColorHeader
 		)
