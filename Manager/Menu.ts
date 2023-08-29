@@ -16,10 +16,14 @@ export class MenuManager {
 
 	public Reset: Menu.Button
 
+	private readonly basePath = "github.com/octarine-public/find-region-info/scripts_files/"
+
+	public readonly iconQueueInfo = this.basePath + "queue_info.svg"
+
 	constructor() {
 		const menu = Menu.AddEntry("Main")
 
-		this.Tree = menu.AddNode("Finding Info")
+		this.Tree = menu.AddNode("Finding Info", this.iconQueueInfo)
 		this.State = this.Tree.AddToggle("State", true)
 
 		this.ShowRegion = this.Tree.AddToggle("Show regions")
