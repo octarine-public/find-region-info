@@ -1,7 +1,6 @@
-import { FlagText, RectangleX } from "github.com/octarine-private/immortal-core/index"
-import { Color, GUIInfo, Input, Menu, Vector2, VMouseKeys } from "github.com/octarine-public/wrapper/index"
+import { ConVarsSDK, Color, GUIInfo, Input, Menu, Rectangle, RendererSDK, TextFlags, Vector2, VMouseKeys } from "github.com/octarine-public/wrapper/index"
 
-import { MenuManager } from "../Manager/Menu"
+import { MenuManager, scriptBasePath } from "../Manager/Menu"
 
 export interface IMenu {
 	PositionX: number
@@ -13,17 +12,21 @@ export interface IMenu {
 
 export class WindowPanel {
 	public static OnWindowSizeChanged(): void {
-		this.HeaderSize.x = GUIInfo.ScaleWidth(250)
-		this.HeaderSize.y = GUIInfo.ScaleHeight(35)
+		this.HeaderSize.x = GUIInfo.ScaleWidth(226)
+		this.HeaderSize.y = GUIInfo.ScaleHeight(34)
+		this.ArrowSize = GUIInfo.ScaleWidth(32)
+		this.HeaderPadding = GUIInfo.ScaleWidth(4)
 	}
 
 	private static HeaderPosition = new Vector2()
+	private static HeaderPadding = 0
+	private static ArrowSize = 0
 	private static readonly HeaderSize = new Vector2()
 
-	private static readonly basePath = "github.com/octarine-public/find-region-info/"
-	private static readonly header = this.basePath + "scripts_files/header.svg"
-	private static readonly arrowActivePath = this.basePath + "scripts_files/arrow_active.svg"
-	private static readonly arrowInactivePath = this.basePath + "scripts_files/arrow_inactive.svg"
+	private static readonly headerPath = scriptBasePath + "header.svg"
+	private static readonly arrowActivePath = scriptBasePath + "arrow_active.svg"
+	private static readonly arrowActivePath180 = scriptBasePath + "arrow_active180.svg"
+	private static readonly arrowInactivePath = scriptBasePath + "arrow_inactive.svg"
 
 	private TotalPlayers = 0
 	private DirtyPosition = false
@@ -39,25 +42,27 @@ export class WindowPanel {
 	}
 
 	public get HeaderPosition() {
-		return new RectangleX(WindowPanel.HeaderPosition, WindowPanel.HeaderSize)
+		return new Rectangle(
+			WindowPanel.HeaderPosition.Clone(),
+			WindowPanel.HeaderPosition.Add(WindowPanel.HeaderSize)
+		)
 	}
 
 	public OnDraw(players: Map<number, string>, regions: number[]) {
 		const baseHeader = this.HeaderPosition
 
 		if (!baseHeader.IsZero()) {
-			this.Header(baseHeader)
-			this.Players(baseHeader, players, regions)
+			this.Header()
+			this.Players(players, regions)
 		}
-
 		if (baseHeader.IsZero()) {
 			return
 		}
 
 		if (this.DirtyPosition) {
 			const mousePos = Input.CursorOnScreen
-			baseHeader.pos1.CopyFrom(mousePos.Subtract(this.MouseOnPanel))
-			this.menu.Position.Vector = baseHeader.pos1
+			WindowPanel.HeaderPosition.CopyFrom(mousePos.Subtract(this.MouseOnPanel))
+			this.menu.Position.Vector = WindowPanel.HeaderPosition
 				.Clone()
 				.DivideScalarX(GUIInfo.GetWidthScale())
 				.DivideScalarY(GUIInfo.GetHeightScale())
@@ -98,42 +103,74 @@ export class WindowPanel {
 			return true
 		}
 
-		const baseHeader = this.HeaderPosition
-		const header = baseHeader.Clone().SubtractSize(10)
+		const headPad = WindowPanel.HeaderPadding
+		const header = this.HeaderPosition
 
-		const arrowSize = new Vector2(GUIInfo.ScaleWidth(32), header.Height)
-		const arrowPos = header.pos1.Clone().AddScalarX(header.Width - arrowSize.x)
-		const arrowPosition = new RectangleX(arrowPos, arrowSize)
+		header.pos1.AddScalarForThis(headPad)
+		header.pos2.AddScalarForThis(-headPad)
 
-		if (
-			Input.CursorOnScreen.IsUnderRectangle(
-				arrowPosition.x,
-				arrowPosition.y,
-				arrowPosition.Width,
-				arrowPosition.Height
-			)
-		) {
+		const arrSize = WindowPanel.ArrowSize
+		const arrowPos = new Vector2(header.pos2.x - arrSize - headPad, header.pos1.y)
+
+		if (new Rectangle(arrowPos, arrowPos.AddScalar(WindowPanel.ArrowSize)).Contains(
+			Input.CursorOnScreen
+		)) {
 			this.menu.ShowRegion.value = !this.menu.ShowRegion.value
 			return false
 		}
 
-		if (!Input.CursorOnScreen.IsUnderRectangle(header.x, header.y, header.Width, header.Height)) {
+		if (!header.Contains(Input.CursorOnScreen)) {
 			return true
 		}
 
 		this.DirtyPosition = true
-		this.MouseOnPanel.CopyFrom(Input.CursorOnScreen.Subtract(header.pos1))
+		this.MouseOnPanel.CopyFrom(Input.CursorOnScreen.Subtract(this.HeaderPosition.pos1))
 		return false
 	}
+	protected DrawTextLine(text0: string, text1: string, rect: Rectangle, col: Color) {
+		const flags: any[] = [
+			col,
+			2.1,
+			0,
+			undefined,
+			undefined,
+			false,
+			false,
+			false
+		]
 
-	protected Players(baseHeader: RectangleX, players: Map<number, string>, regions: number[]) {
+		flags[2] = TextFlags.Center | TextFlags.Left
+		flags[5] = false
+		RendererSDK.TextByFlags(text0, rect, ...flags)
+
+		if (!text1) {
+			return
+		}
+
+		flags[2] = TextFlags.Center | TextFlags.Right
+		flags[5] = true
+		RendererSDK.TextByFlags(text1, rect, ...flags)
+	}
+	protected Players(players: Map<number, string>, regions: number[]) {
 		let TotalPlayers = 0
-		const position = baseHeader.pos1.Clone()
-		const background = new RectangleX(position, baseHeader.pos2)
+
+		const background = this.HeaderPosition
+		const verticalDirection = background.pos1.y < RendererSDK.WindowSize.y / 2 ? 1 : -1
+
+		let regionsMask = 0
+
+		if (this.menu.ShowRegionOnlyLobby.value) {
+			regionsMask ||= ConVarsSDK.GetInt("dota_matchgroups_new", 0)
+			regionsMask ||= ConVarsSDK.GetInt("dota_matchgroups_automatic", 0)
+		}
+		regionsMask ||= ~0
 
 		for (const [key, displayName] of players) {
 			const playerCount = regions[key] ?? 0
 			if (playerCount === 0) {
+				continue
+			}
+			if (!(regionsMask & (1 << key))) {
 				continue
 			}
 
@@ -142,65 +179,62 @@ export class WindowPanel {
 					? Menu.Localization.Localize(displayName.slice(1))
 					: displayName
 
-				background.pos1.AddScalarY(background.Height)
+				const h = background.Height * verticalDirection
+				background.pos1.y += h
+				background.pos2.y += h
+				RendererSDK.FilledRect(background.pos1, background.Size, this.backgroundColor)
 
-				RectangleX.FilledRect(background, this.backgroundColor)
+				const textPosition = background.Clone()
+				textPosition.pos1.AddScalarForThis(WindowPanel.HeaderPadding)
+				textPosition.pos2.AddScalarForThis(-WindowPanel.HeaderPadding)
 
-				const textPosition = background.Clone().SubtractSize(10)
-
-				RectangleX.Text(
-					`${localizedName}: ${this.TextPlayers(playerCount)}`,
+				this.DrawTextLine(
+					localizedName,
+					playerCount.toString(),
 					textPosition,
-					this.TextColorRegion,
-					2,
-					FlagText.LEFT_CENTER
+					this.TextColorRegion
 				)
 			}
-
 			TotalPlayers += playerCount
 		}
 
 		this.TotalPlayers = TotalPlayers
 	}
 
-	protected Header(baseHeader: RectangleX) {
-		RectangleX.Image(WindowPanel.header, baseHeader, this.ImageColorHeader)
-		const header = baseHeader.Clone().SubtractSize(10)
+	protected Header() {
+		const header = this.HeaderPosition
 
-		this.HeaderText(header)
+		RendererSDK.Image(WindowPanel.headerPath, header.pos1, undefined, header.Size, this.ImageColorHeader)
 
-		const arrowSize = new Vector2(GUIInfo.ScaleWidth(32), header.Height)
-		const arrowPos = header.pos1.Clone().AddScalarX(header.Width - arrowSize.x)
-		const arrowPosition = new RectangleX(arrowPos, arrowSize)
+		const arrSize = WindowPanel.ArrowSize
+		const headPad = WindowPanel.HeaderPadding
+		header.pos2.x -= arrSize
 
-		RectangleX.Image(
-			!this.menu.ShowRegion.value ? WindowPanel.arrowInactivePath : WindowPanel.arrowActivePath,
-			arrowPosition,
+		const textRect = header.Clone()
+		textRect.pos1.AddScalarForThis(headPad)
+		textRect.pos2.AddScalarForThis(-headPad)
+		//textRect.pos2.x -= arrSize
+		//textRect.pos2.y -= headPad
+
+		this.DrawTextLine(
+			Menu.Localization.Localize("Total in search") +
+			": " + this.TextPlayers(this.TotalPlayers),
+			"",
+			textRect,
+			this.TextColorHeader
+		)
+
+		const verticalDirection = header.pos1.y < RendererSDK.WindowSize.y / 2
+		RendererSDK.Image(
+			this.menu.ShowRegion.value
+				? verticalDirection
+					? WindowPanel.arrowActivePath
+					: WindowPanel.arrowActivePath180
+				: WindowPanel.arrowInactivePath,
+			new Vector2(header.pos2.x, header.pos1.y),
+			undefined,
+			new Vector2().AddScalarForThis(arrSize),
 			this.ImageColorHeader
-		)
-	}
-
-	protected HeaderText(HeaderPositon: RectangleX) {
-		const textSearch = RectangleX.Text(
-			Menu.Localization.Localize("Total in search") + ":",
-			HeaderPositon,
-			this.TextColorHeader,
-			2,
-			FlagText.LEFT_CENTER
-		)
-
-		const gap = GUIInfo.ScaleWidth(3)
-		const textPosition = HeaderPositon.Clone()
-
-		textPosition.pos1.AddScalarX(textSearch.Width + gap)
-		textPosition.pos2.SubtractScalarX(textSearch.Width)
-
-		RectangleX.Text(
-			this.TextPlayers(this.TotalPlayers),
-			textPosition,
-			this.TextColorHeader,
-			2,
-			FlagText.LEFT_CENTER
 		)
 	}
 

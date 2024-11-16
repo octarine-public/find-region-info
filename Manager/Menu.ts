@@ -1,10 +1,13 @@
 import { Menu, Vector2 } from "github.com/octarine-public/wrapper/index"
+export const scriptBasePath = "github.com/octarine-public/find-region-info/scripts_files/"
 
 export class MenuManager {
 	public Tree: Menu.Node
 	public State: Menu.Toggle
 
 	public ShowRegion: Menu.Toggle
+	public ShowRegionOnlyLobby: Menu.Toggle
+
 	public Position: {
 		X: Menu.Slider
 		Y: Menu.Slider
@@ -14,31 +17,26 @@ export class MenuManager {
 	public OpacityHeader: Menu.Slider
 	public OpacityRegion: Menu.Slider
 
-	public Reset: Menu.Button
-
-	private readonly basePath = "github.com/octarine-public/find-region-info/scripts_files/"
-
-	public readonly iconQueueInfo = this.basePath + "queue_info.svg"
+	public readonly iconQueueInfo = scriptBasePath + "queue_info.svg"
 
 	constructor() {
-		const menu = Menu.AddEntry("Main")
+		const menu = Menu.AddEntry("Overwolf")
 
-		this.Tree = menu.AddNode("Finding Info", this.iconQueueInfo)
+		this.Tree = menu.AddNode("Total in search", this.iconQueueInfo)
 		this.State = this.Tree.AddToggle("State", true)
 
-		this.ShowRegion = this.Tree.AddToggle("Show regions")
+		this.ShowRegion = this.Tree.AddToggle("Show regions", true)
+		this.ShowRegionOnlyLobby = this.Tree.AddToggle("Only party regions", true)
+
 		this.OpacityHeader = this.Tree.AddSlider("Opacity header", 100, 25, 100)
 		this.OpacityRegion = this.Tree.AddSlider("Opacity region", 85, 25, 100)
 
 		this.Position = this.Tree.AddVector2(
 			"Position",
-			new Vector2(1237, 10),
+			new Vector2(1305, 1025),
 			new Vector2(0, 0),
 			new Vector2(1920, 1080)
 		)
-
-		this.Reset = this.Tree.AddButton("Reset")
-		this.Reset.OnValue(() => this.ResetSettings())
 	}
 
 	public get IMenu() {
@@ -52,20 +50,10 @@ export class MenuManager {
 	}
 
 	public OnMenuChange(callback: () => void) {
-		this.Reset.OnValue(() => callback())
 		this.Position.X.OnValue(() => callback())
 		this.Position.Y.OnValue(() => callback())
 		this.ShowRegion.OnValue(() => callback())
 		this.OpacityHeader.OnValue(() => callback())
 		this.OpacityRegion.OnValue(() => callback())
-	}
-
-	protected ResetSettings() {
-		this.State.value = true
-		this.ShowRegion.value = false
-		this.OpacityHeader.value = 100
-		this.OpacityRegion.value = 85
-		this.Position.X.value = 1237
-		this.Position.Y.value = 10
 	}
 }
