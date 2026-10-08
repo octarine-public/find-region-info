@@ -20,7 +20,10 @@ export class MenuManager {
 	public readonly Overlay: MenuSDK.OverlayMenu
 
 	private readonly tree: Menu.Node
-	/** The Overwolf page, shared with the Overwolf script: the panel is one of its tabs. */
+	/**
+	 * The Overwolf section, shared with the Overwolf script: the panel is one of the pages
+	 * in its side column, after the Overwolf panel's own (priority 2).
+	 */
 	private readonly baseNode = Menu.AddEntry(
 		"Overwolf",
 		PathData.WrapperMenuPath + "/icons/info.svg"
@@ -28,7 +31,7 @@ export class MenuManager {
 	private readonly nodeIcon = `${Paths.MenuIcons}/queue.svg`
 
 	constructor() {
-		this.tree = this.baseNode.AddNode("Total in search", this.nodeIcon)
+		this.tree = this.baseNode.AddNode("Total in search", this.nodeIcon, "", -1, 2)
 		this.tree.SortNodes = false
 		this.State = this.tree.AddToggle("State", true)
 		this.tree.HeaderControl = this.State
@@ -67,10 +70,6 @@ export class MenuManager {
 	}
 
 	public get IsOpen(): boolean {
-		return (
-			MenuSDK.MenuManager.IsOpen &&
-			this.baseNode.IsActivePage &&
-			this.baseNode.ActiveTab?.entry === this.tree.entry
-		)
+		return MenuSDK.MenuManager.IsOpen && this.tree.IsActivePage
 	}
 }
