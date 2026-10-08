@@ -21,16 +21,20 @@ export class MenuManager {
 
 	private readonly tree: Menu.Node
 	/**
-	 * The Overwolf section, shared with the Overwolf script: the panel is one of the pages
+	 * The Insights section, shared with the Overwolf script: the panel is one of the pages
 	 * in its side column, after the Overwolf panel's own (priority 2).
 	 */
 	private readonly baseNode = Menu.AddEntry(
-		"Overwolf",
+		"Insights",
 		PathData.WrapperMenuPath + "/icons/info.svg"
 	)
 	private readonly nodeIcon = `${Paths.MenuIcons}/queue.svg`
 
 	constructor() {
+		// the page was filed under Overwolf: a config saved there still lands on it
+		MenuSDK.AddConfigMigration(raw =>
+			MenuSDK.MigrateNodeTab(raw, "Overwolf", "Insights", "Total in search")
+		)
 		this.tree = this.baseNode.AddNode("Total in search", this.nodeIcon, "", -1, 2)
 		this.tree.SortNodes = false
 		this.State = this.tree.AddToggle("State", true)
