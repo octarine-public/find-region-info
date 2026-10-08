@@ -1,0 +1,16 @@
+{
+	"State": "状态",
+	"Key": "按键",
+	"Key turn on/off panel": "开关面板的按键",
+	"Total in search": "正在匹配总数",
+	"in search": "正在匹配",
+	"Regions": "地区",
+	"Nobody is searching": "无人匹配",
+	"Only party regions": "仅匹配所选地区",
+	"Count only the regions\nthe search is set to": "只统计匹配时\n选择的地区",
+	"Open direction": "展开方向",
+	"Which way the regions unfold\nfrom the total": "地区列表\n从总数向哪边展开",
+	"Up": "向上",
+	"Down": "向下",
+	"Expanded": "已展开"
+}

@@ -1,0 +1,16 @@
+{
+	"State": "Состояние",
+	"Key": "Клавиша",
+	"Key turn on/off panel": "Клавиша вкл/выкл панели",
+	"Total in search": "Всего в поиске",
+	"in search": "в поиске",
+	"Regions": "Регионы",
+	"Nobody is searching": "Никто не ищет",
+	"Only party regions": "Только регионы поиска",
+	"Count only the regions\nthe search is set to": "Считать только регионы,\nвыбранные для поиска",
+	"Open direction": "Направление раскрытия",
+	"Which way the regions unfold\nfrom the total": "Куда раскрываются регионы\nот общего числа",
+	"Up": "Вверх",
+	"Down": "Вниз",
+	"Expanded": "Развёрнуто"
+}
