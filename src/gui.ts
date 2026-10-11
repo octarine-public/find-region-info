@@ -185,6 +185,10 @@ export class GUIHelper {
 		RefreshPalette()
 		this.refreshRows()
 		const presence = this.presence()
+		if (this.fold.Running) {
+			// the card is drawn in the retained pass, whose rate would step the fold visibly
+			Source2SDK.InvalidateDraw2D()
+		}
 		const header = this.headerWidth()
 		const width = header + Math.max(0, this.regionsBodyWidth() - header) * presence
 		const line = MenuSDK.hudH(HEADER_HEIGHT)
@@ -219,6 +223,7 @@ export class GUIHelper {
 		this.pressed = false
 		if (this.overChevron()) {
 			this.menu.Expanded.value = !this.menu.Expanded.value
+			Source2SDK.InvalidateDraw2D()
 		}
 		return false
 	}

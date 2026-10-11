@@ -10,7 +10,7 @@ new (class CFindRegionInfo {
 	private readonly gui = new GUIHelper(this.menu, this.stats)
 
 	constructor() {
-		EventsSDK.on("Draw", this.Draw.bind(this))
+		EventsSDK.on("Draw2D", this.Draw.bind(this))
 		EventsSDK.on("MatchmakingStatsUpdated", msg => this.stats.Update(msg))
 		InputEventSDK.on("MouseKeyUp", this.MouseKeyUp.bind(this))
 		InputEventSDK.on("MouseKeyDown", this.MouseKeyDown.bind(this))
@@ -25,6 +25,10 @@ new (class CFindRegionInfo {
 		return GameState.UIState === DOTAGameUIState.DOTA_GAME_UI_STATE_DASHBOARD
 	}
 
+	/**
+	 * Runs in the retained HUD pass: the card holds between passes, and a pass that leaves it out
+	 * takes it down.
+	 */
 	public Draw() {
 		if (this.State && this.IsMainMenu) {
 			this.gui.Draw()
