@@ -70,6 +70,28 @@ class HeaderAnchor implements MenuSDK.IOverlayMenu {
 	}
 }
 
+/** What a frame of the panel is built from, so a frame built from the same can be held instead. */
+class FrameStamp {
+	private readonly values: unknown[] = []
+	private index = 0
+	private same = true
+
+	public get Same() {
+		return this.same
+	}
+	public Begin() {
+		this.index = 0
+		this.same = true
+	}
+	public Put(value: unknown) {
+		if (this.values[this.index] !== value) {
+			this.values[this.index] = value
+			this.same = false
+		}
+		this.index++
+	}
+}
+
 export class GUIHelper {
 	private pressed = false
 	/** Whether the regions unfold above the total this frame. */
@@ -81,6 +103,8 @@ export class GUIHelper {
 	private rowsVersion = -1
 	private rowsMask = 0
 	private rowsLanguage = -1
+	/** Counts every time the rows and the total are worded again. */
+	private rowsEpoch = 0
 	private total = ""
 	private unit = ""
 	private title = ""
@@ -112,6 +136,7 @@ export class GUIHelper {
 	private readonly panel: MenuSDK.OverlayPanel
 	/** How far the regions stand open, 0 to 1: read at draw time, the tween only carries it. */
 	private readonly fold = new MenuSDK.Tween(0, () => undefined)
+	private readonly stamp = new FrameStamp()
 
 	private readonly icon = `${Paths.Images}/players.svg`
 	private readonly arrow = `${Paths.Images}/chevron-down.svg`
@@ -169,6 +194,9 @@ export class GUIHelper {
 		)
 		this.opensUp = this.menu.OpensUp
 		this.anchor.Lift = this.opensUp ? this.size.y - line : 0
+		if (this.restamp() && this.panel.Hold(this.size)) {
+			return
+		}
 		this.panel.Draw(this.size, this.drawContent)
 	}
 
@@ -217,6 +245,29 @@ export class GUIHelper {
 			this.foldTarget = target
 		}
 		return this.fold.Value
+	}
+
+	/**
+	 * Writes what this frame is built from and answers whether the last frame was built from the
+	 * same. A frame whose text the host could not measure yet is never the same.
+	 */
+	private restamp(): boolean {
+		const stamp = this.stamp,
+			theme = MenuSDK.Theme
+		stamp.Begin()
+		stamp.Put(this.rowsEpoch)
+		stamp.Put(this.opensUp)
+		stamp.Put(this.fold.Value)
+		stamp.Put(this.size.x)
+		stamp.Put(this.size.y)
+		stamp.Put(this.overChevron())
+		stamp.Put(this.panel.Scale)
+		stamp.Put(MenuSDK.DpToPx(1))
+		stamp.Put(theme.PaletteEpoch)
+		stamp.Put(theme.Glow)
+		stamp.Put(MenuSDK.FontEpoch())
+		stamp.Put(Menu.Localization.Version)
+		return stamp.Same && !this.widthsDirty
 	}
 
 	private headerWidth(): number {
@@ -484,6 +535,7 @@ export class GUIHelper {
 		this.rowsVersion = version
 		this.rowsMask = mask
 		this.rowsLanguage = language
+		this.rowsEpoch++
 		this.widthsDirty = true
 
 		const regions = this.collected
