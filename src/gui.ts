@@ -90,6 +90,10 @@ class FrameStamp {
 		}
 		this.index++
 	}
+	/** Lets go of the last frame, so the next one is drawn whatever it is built from. */
+	public Forget() {
+		this.values.length = 0
+	}
 }
 
 export class GUIHelper {
@@ -174,6 +178,7 @@ export class GUIHelper {
 			"hud-find-region-info",
 			MenuSDK.EPanelLife.Always
 		)
+		MenuSDK.OnMetricsChanged(() => this.stamp.Forget())
 	}
 
 	/**
